@@ -32,6 +32,9 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
             ->when(request()->has('price_from') && request()->has('price_to') && request('price_from') != null && request('price_to') != null, function ($query) {
                 $query->whereBetween('grand_total', [request('price_from'), request('price_to')]);
             })
+            ->when(request()->has('rank') && request('rank') != null, function ($q)  {
+                $q->orderBy('created_at', request('rank') == 1 ? 'asc' : 'desc');
+            })
             ->latest()
             ->select(['*'])
             ->paginate(10);
@@ -56,7 +59,6 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
                 $query->whereBetween('grand_total', [request('price_from'), request('price_to')]);
             })
             ->latest()->select(['*'])->paginate(10);
-
     }
 
     public function filter($category_id=null,$brand_id=null,$status=null,$placed_date=null,$payment_gateway=null,$price_from=null,$price_to=null) : LengthAwarePaginator

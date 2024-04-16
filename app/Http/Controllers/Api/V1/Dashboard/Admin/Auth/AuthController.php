@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 class AuthController extends Controller
 {
 
-    //user controller
     protected AuthService $authService;
 
     public function __construct(AuthService $authService)
@@ -29,6 +28,13 @@ class AuthController extends Controller
     {
 
         return $this->authService->getProfile();
+    }
+
+    public function home(): JsonResponse
+    {
+
+        return $this->authService->home();
+
     }
 
     public function logout(): JsonResponse

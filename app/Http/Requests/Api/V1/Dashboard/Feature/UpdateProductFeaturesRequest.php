@@ -25,7 +25,6 @@ class UpdateProductFeaturesRequest extends FormRequest
             'productFeature.*.id' => 'required|exists:product_features,id',
             'productFeature.*.name' => 'required|string',
             'productFeature.*.discrimination' => 'required|string',
-            'productFeature.*.quantity' => 'required|integer',
             'productFeature.*.details' => 'required|array',
             'productFeature.*.details.*.id' => 'required|exists:product_feature_details,id',
             'productFeature.*.details.*.content' => 'required',

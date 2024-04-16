@@ -3,6 +3,7 @@
 namespace App\Repository\Eloquent;
 
 use App\Models\Admin;
+use App\Models\Category;
 use App\Models\User;
 use App\Repository\AuthRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,9 @@ class AuthRepository  extends Repository implements AuthRepositoryInterface
             ->where('user_type', 'seller')
             ->when(request()->has('name'), function ($query) {
                 $query->where('name', 'like', '%' . request('name') . '%');
+            })
+            ->when(request()->has('rank') && request('rank') != null, function ($q)  {
+                $q->orderBy('created_at', request('rank') == 1 ? 'asc' : 'desc');
             })
             ->latest()
             ->paginate(10);

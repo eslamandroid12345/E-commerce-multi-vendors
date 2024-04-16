@@ -21,6 +21,7 @@ class ProductFeatureItem extends Model
     {
         return $this->hasMany(OrderDetail::class,'product_feature_item_id','id');
     }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class,'product_id','id');

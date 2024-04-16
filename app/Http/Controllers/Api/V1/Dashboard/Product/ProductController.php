@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Dashboard\ChangeStatusRequest;
 use App\Http\Requests\Api\V1\Dashboard\Product\StoreProductRequest;
 use App\Http\Requests\Api\V1\Dashboard\Product\UpdateProductRequest;
+use App\Http\Requests\Api\V1\Dashboard\Product\UpdateimageRequest;
 use App\Http\Services\Api\V1\Dashboard\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 
@@ -54,5 +55,15 @@ class ProductController extends Controller
     {
         return $this->productService->sellers();
 
+    }
+
+    public function deleteImage($id)
+    {
+        return $this->productService->deleteImage($id);
+    }
+
+    public function updateImage(UpdateimageRequest $request,$id)
+    {
+        return $this->productService->updateImage($request,$id);
     }
 }

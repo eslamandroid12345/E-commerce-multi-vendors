@@ -25,8 +25,6 @@ class OrderDetailsResource extends JsonResource
             'seller' => $this->seller->name,
             'total_amount' => $this->totalAmount,
             'features' => ProductFeatureItemDetailResource::collection($this->productFeatureItem->productFeatureItemDetail),
-
-
         ];
     }
 }

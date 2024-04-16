@@ -6,6 +6,7 @@ use App\Http\Helpers\Http;
 use App\Http\Requests\Api\V1\Dashboard\ChangeStatusRequest;
 use App\Http\Resources\V1\Dashboard\Admin\User\UserCollection;
 use App\Http\Resources\V1\Dashboard\Admin\User\UserResource;
+use App\Http\Resources\V1\Dashboard\Admin\User\UserShowResource;
 use App\Http\Services\Mutual\GetService;
 use App\Http\Traits\Responser;
 use App\Repository\UserRepositoryInterface;
@@ -29,7 +30,7 @@ class UserService
 
     public function show($id): JsonResponse
     {
-        return $this->getService->handle(UserResource::class,$this->userRepository,'getById',parameters: [$id], is_instance: true, message: __('dashboard_api.show_successfully'));
+        return $this->getService->handle(UserShowResource::class,$this->userRepository,'getById',parameters: [$id], is_instance: true, message: __('dashboard_api.show_successfully'));
     }
 
     public function destroy($id): JsonResponse

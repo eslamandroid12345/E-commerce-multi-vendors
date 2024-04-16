@@ -15,13 +15,13 @@ class ProductFeatureItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-
-            'id' => $this->id,
-            'product_price' => $this->product_price,
-            'price' => $this->price,
-            'discount' => $this->discount,
-            'quantity' => $this->quantity,
-            'features' => ProductFeatureItemDetailResource::collection($this->productFeatureItemDetail),
-        ];
+                    'id' => $this->id,
+                    'product_price' => $this->product_price,
+                    'price' => $this->price,
+                    'discount' => $this->discount,
+                    'quantity' => $this->quantity,
+                    // 'features' => ProductFeatureItemDetailResource::_collection($this->productFeatureItemDetail,['price' => $this->price, 'quantity' => $this->quantity]),
+                    'features' => ProductFeatureItemDetailResource::collection($this->productFeatureItemDetail),
+                ];
     }
 }

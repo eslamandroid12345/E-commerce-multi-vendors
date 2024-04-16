@@ -15,7 +15,6 @@ use App\Http\Controllers\Api\V1\Dashboard\Seller\SellerController;
 use App\Http\Controllers\Api\V1\Dashboard\Order\OrderController;
 
 Route::group(['prefix' => 'admin', 'controller' => AuthController::class,'middleware' => 'auth:admin-api'], function () {
-
     Route::group(['prefix' => 'auth'], function () {
         Route::get('get-profile', 'getProfile');
         Route::post('logout', 'logout');
@@ -37,6 +36,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin-api'], function (
         Route::apiResource('brands', BrandController::class);
         Route::post('brands/change-status/{id}',[BrandController::class,'changeStatus']);
         Route::apiResource('products', ProductController::class);
+        Route::post('products/update-image/{id}',[ProductController::class,'updateImage']);
+        Route::post('products/delete-image/{id}',[ProductController::class,'deleteImage']);
         Route::post('products/change-status/{id}',[ProductController::class,'changeStatus']);
         Route::get('product/sellers',[ProductController::class,'sellers']);
         Route::post('add-feature/{id}', [FeatureProductController::class,'addFeature']);
@@ -53,6 +54,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin-api'], function (
         Route::get('get-all-features/{id}', [FeatureProductController::class,'getAllFeatures']);
         Route::post('update-features/{id}', [FeatureProductController::class,'updateFeatures']);
         Route::delete('delete-feature/{id}', [FeatureProductController::class,'deleteFeature']);
+        Route::get('home', [AuthController::class,'home']);
 });
 
 

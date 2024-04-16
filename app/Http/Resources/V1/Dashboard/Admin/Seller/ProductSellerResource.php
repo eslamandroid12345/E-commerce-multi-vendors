@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Resources\V1\Dashboard\Admin\User;
+namespace App\Http\Resources\V1\Dashboard\Admin\Seller;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class ProductSellerResource extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -15,13 +16,13 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'is_active' => $this->is_active,
-            'activation' => $this->is_active == 1 ? 'active' : 'not_active',
-        ];
+            'price' => 0,
+            'discount' => 0,
+            'prod_price' => 0,
+            'image' =>  $this->first_image,
+            ];
     }
 }
+

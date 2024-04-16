@@ -172,8 +172,6 @@ class ProductFeatureService
         }
     }
 
-
-
     public function updateFeatures($id,UpdateProductFeaturesRequest $request): JsonResponse
     {
 

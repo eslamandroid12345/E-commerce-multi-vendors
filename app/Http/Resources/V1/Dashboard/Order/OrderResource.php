@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             'name' => $this->user->name,
             'items' => $this->items_count,
             'price' => $this->grand_total,
+//            'price' => $this->totalOrderPrice,
             'place_Date' => $this->created_at->format('d-m-Y'),
             'payment_method' => $this->payment_method,
             'payment_gateway' => $this->payment_gateway,

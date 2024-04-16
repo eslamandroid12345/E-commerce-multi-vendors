@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -45,6 +46,20 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function image() : Attribute
+    {
+        return Attribute::get(
+            get: function ($value)
+            {
+                if ($value !== null)
+                {
+                    return url($value);
+                }
+                return null;
+            }
+        );
+    }
 
     public function getJWTIdentifier()
     {

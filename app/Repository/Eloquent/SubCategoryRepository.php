@@ -23,6 +23,9 @@ class SubCategoryRepository extends Repository implements SubCategoryRepositoryI
         $query->when(request()->has('name') && request('name') != null, function ($q)  {
             $q->whereTranslationLike('name', '%' . request('name') . '%');
         });
+        $query->when(request()->has('rank') && request('rank') != null, function ($q)  {
+            $q->orderBy('created_at', request('rank') == 1 ? 'asc' : 'desc');
+        });
 
         return $query
             ->withCount(['products'])

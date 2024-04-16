@@ -5,6 +5,7 @@ namespace App\Http\Services\Api\V1\Dashboard\Admin\Auth;
 use App\Http\Helpers\Http;
 use App\Http\Requests\Api\V1\Dashboard\Admin\Auth\LoginRequest;
 use App\Http\Resources\V1\Dashboard\Admin\Auth\AdminResource;
+use App\Http\Resources\V1\Dashboard\Admin\Home\HomeResource;
 use App\Http\Traits\Responser;
 use App\Repository\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -54,6 +55,14 @@ class AuthService
         {
             return $this->responseFail(Http::INTERNAL_SERVER_ERROR, $exception->getMessage());
         }
+    }
+
+    public function home(): JsonResponse
+    {
+
+        $auth = Auth::guard('admin-api')->user();
+
+        return $this->responseSuccess(message: 'تم الحصول علي بيانات الصفحه الرئيسيه بنجاح', data: new HomeResource($auth));
     }
 
     public function logout(): JsonResponse

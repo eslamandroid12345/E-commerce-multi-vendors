@@ -41,7 +41,7 @@ class ProductFeatureRepository extends Repository implements ProductFeatureRepos
     public function updateProductFeature($product,$featureData): bool
     {
         $model = $this->model::findOrFail($featureData['id']);
-        return $model->update(['name' => $featureData['name'], 'discrimination' => $featureData['discrimination'], 'quantity' => $featureData['quantity'], 'product_id' => $product->id,]);
+        return $model->update(['name' => $featureData['name'], 'discrimination' => $featureData['discrimination'], 'product_id' => $product->id,]);
     }
 
 

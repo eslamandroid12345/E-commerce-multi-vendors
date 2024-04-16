@@ -25,7 +25,7 @@ class OrderController extends Controller
     {
         return $this->orderService->getOneOrder($id);
     }
-    public function filterOrder(FilterOrderRequest $request)
+    public function filterOrder(FilterOrderRequest $request): JsonResponse
     {
         return $this->orderService->filterOrder($request);
     }

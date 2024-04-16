@@ -62,9 +62,7 @@ class Category extends Model
     public function subCategoriesCount() : Attribute {
         return Attribute::get(
             get: function () {
-
                 return $this->subCategories()?->count();
-
             }
         );
     }

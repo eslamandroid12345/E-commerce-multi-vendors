@@ -24,18 +24,13 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class,'order_id','id');
     }
 
-
-
-
-
     public function itemsCount() : Attribute {
         return Attribute::get(
             get: function () {
-
                 return $this->details()->count();
-
             }
         );
     }
 
+    
 }

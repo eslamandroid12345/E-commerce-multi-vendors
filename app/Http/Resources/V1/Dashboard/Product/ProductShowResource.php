@@ -23,11 +23,16 @@ class ProductShowResource extends JsonResource
              'new_orders' => $this->count_new_orders,
              'name' => $this->name,
              'tags' => $this->tags,
-            'translations' => $this->all_translations,
+             'translations' => $this->all_translations,
              'price' => $this->productFeatureItemPrice ? $this->productFeatureItemPrice->price : 0,
              'product_code' => $this->product_code,
              'category' => $this->category->name,
              'sub_category' => $this->sub_category->name,
+             'activation' => $this->is_active,
+             'brand' => $this->brand->name,
+             'category_id' => $this->category_id,
+             'sub_category_id' => $this->sub_category_id,
+             'seller_id' => $this->seller_id,
              'images' =>   ProductImageResource::collection($this->images),
              'orders' => ProductOrdersResource::collection($this->orderDetails)
         ];

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,7 +46,17 @@ class Product extends Model
 
     public function productFeatureItemPrice(): HasOne
     {
-        return $this->hasOne(ProductFeatureItem::class,'product_id','id')->orderBy('price','ASC');
+        return $this->hasOne(ProductFeatureItem::class,'product_id','id')->where('price','>',0);
+    }
+
+    public function totalAfterDiscount(): Attribute
+    {
+        return Attribute::get(function (){
+                $price = $this->productFeatureItemPrice?->price;
+                $discount = $this->productFeatureItemPrice?->discount;
+                $discountAmount = $price * ($discount / 100);
+                return  $price - $discountAmount;
+        });
     }
 
     public function firstImage(): HasOne
@@ -78,6 +87,7 @@ class Product extends Model
         );
     }
 
+
     public function featuresCount() : Attribute {
         return Attribute::get(
             get: function () {
@@ -100,7 +110,7 @@ class Product extends Model
     public function allTranslations() : Attribute {
         return Attribute::get(
             get: function () {
-                return $this->translations()->select('id','name','locale')->get();
+                return $this->translations()->select('id','name','description','locale')->get();
 
             }
         );
@@ -136,4 +146,8 @@ class Product extends Model
         );
     }
 
+    public function productInStock()
+    {
+        return $this->productFeatureItemPrice->where('quantity', '>', 0)->count();
+    }
 }

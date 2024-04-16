@@ -53,5 +53,4 @@ class OrderDetail extends Model
         return $this->belongsTo(ProductFeatureItem::class,'product_feature_item_id','id');
     }
 
-
 }

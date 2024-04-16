@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'user@elryad.com',
             'password' => 'elryad1256!#',
             'phone' => '01063922633',
+            'image' => 'storage/users/user.png',//add image
         ]);
     }
 }

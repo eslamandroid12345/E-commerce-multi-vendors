@@ -18,5 +18,10 @@ class ProductFeatureItemDetail extends Model
         return $this->belongsTo(ProductFeatureDetail::class,'product_feature_detail_id','id');
     }
 
+    public function productFeatureItem(): BelongsTo
+    {
+        return $this->belongsTo(ProductFeatureItem::class,'product_feature_item_id','id');
+    }
+
 
 }

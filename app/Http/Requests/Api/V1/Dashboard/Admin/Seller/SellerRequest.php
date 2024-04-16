@@ -37,8 +37,10 @@ class SellerRequest extends FormRequest
             return [
                         'name' => 'required',
                         'store_name' => 'required',
-                        'email' => 'required|email',
-                        'phone' => 'required',
+                        // 'email' => 'required|email',
+                        // 'phone' => 'required',
+                        'email' => 'required|unique:admins,email,'.$this->id,
+                        'phone' => 'required|unique:admins,phone,'.$this->id,
                         'password' => 'nullable|confirmed',
                         'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:4096',
                     ];

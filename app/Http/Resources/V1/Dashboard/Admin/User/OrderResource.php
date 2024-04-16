@@ -5,7 +5,7 @@ namespace App\Http\Resources\V1\Dashboard\Admin\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class OrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,12 +16,10 @@ class UserResource extends JsonResource
     {
         return [
 
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'is_active' => $this->is_active,
-            'activation' => $this->is_active == 1 ? 'active' : 'not_active',
+            'order_id' => $this->id,
+            'placed_date' => $this->created_at->format('Y-m-d'),
+            'status' => $this->order_status,
+
         ];
     }
 }

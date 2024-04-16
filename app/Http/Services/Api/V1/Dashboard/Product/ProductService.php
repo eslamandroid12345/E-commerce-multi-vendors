@@ -3,6 +3,7 @@
 namespace App\Http\Services\Api\V1\Dashboard\Product;
 use App\Http\Helpers\Http;
 use App\Http\Requests\Api\V1\Dashboard\ChangeStatusRequest;
+use App\Http\Requests\Api\V1\Dashboard\Product\UpdateimageRequest;
 use App\Http\Requests\Api\V1\Dashboard\Product\UpdateProductRequest;
 use App\Http\Resources\V1\Dashboard\Admin\Seller\SellerSelectResource;
 use App\Http\Resources\V1\Dashboard\Product\ProductCollection;
@@ -20,14 +21,14 @@ use App\Http\Requests\Api\V1\Dashboard\Product\StoreProductRequest;
 use App\Http\Resources\V1\Dashboard\Product\ProductResource;
 use Illuminate\Support\Facades\DB;
 
+
 class ProductService
 {
     protected ProductRepositoryInterface $productRepository;
     protected ProductImageRepositoryInterface $productImageRepository;
-
     protected FileManagerService $fileManagerService;
-
     protected GetService $getService;
+
 
     use Responser;
 
@@ -98,13 +99,13 @@ class ProductService
             $this->updateProduct($request, $product);
             DB::commit();
             return $this->responseSuccess(message: __('messages.updated successfully'));
-
-        } catch (ModelNotFoundException $exception) {
-
+        }
+        catch (ModelNotFoundException $exception)
+        {
             return $this->responseFail(status: Http::NOT_FOUND, message: __('messages.No data found'));
-
-        } catch (\Exception $e) {
-
+        }
+        catch (\Exception $e)
+        {
             DB::rollback();
             return $this->responseFail(message: __('messages.Something went wrong'));
         }
@@ -156,8 +157,9 @@ class ProductService
             $this->deleteProductImages($product);
             $this->productRepository->delete($id);
             return $this->responseSuccess(message: __('messages.deleted successfully'));
-
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             return $this->responseFail(message: __('messages.Something went wrong'));
         }
     }
@@ -187,5 +189,46 @@ class ProductService
     public function sellers(): JsonResponse
     {
         return $this->getService->handle(resource: SellerSelectResource::class ,repository: $this->authRepository,method:'get',parameters:['user_type','seller'],message:__('dashboard_api.show_successfully'));
+    }
+
+    public function deleteImage($id): JsonResponse
+    {
+        try
+        {
+            $productImage = $this->productImageRepository->getById($id);
+            $product = $this->productRepository->getById($productImage->product_id);
+            if($product->images->count() == 1)
+            {
+                $this->deleteImageAndRecord($productImage);
+                $this->productImageRepository->create(['image' => 'storage/product/images/product.jpg' , 'product_id' => $product->id]);
+                return $this->responseSuccess(message: __('messages.deleted successfully'));
+            } else {
+                $this->deleteImageAndRecord($productImage);
+                return $this->responseSuccess(message: __('messages.deleted successfully'));
+            }
+        } catch (\Exception $e) {
+            return $this->responseFail(message: __('messages.Something went wrong'));
+        }
+    }
+
+    public function updateImage(UpdateimageRequest $request,$id): JsonResponse
+    {
+        try
+        {
+            $product = $this->productRepository->getById($id);
+            if ($request->hasFile('images'))
+            {
+                foreach ($request->images as $index => $image)
+                {
+                    $newImage = $this->fileManagerService->handle("images.$index", "product/images");
+                    $this->productImageRepository->create(['image' => $newImage, 'product_id' => $product->id]);
+                }
+            }
+            return $this->responseSuccess(message: __('messages.updated successfully'));
+        }
+        catch (\Exception $e)
+        {
+            return $this->responseFail(message: __('messages.Something went wrong'));
+        }
     }
 }

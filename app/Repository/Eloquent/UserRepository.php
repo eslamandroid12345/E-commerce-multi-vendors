@@ -21,7 +21,10 @@ class UserRepository extends Repository implements UserRepositoryInterface
         $query = $this->model::query();
 
         $query->when(request()->has('name') && request('name') != null, function ($q)  {
-            $q->where('name', '%' . request('name') . '%');
+            $q->where('name', 'like', '%' . request('name') . '%');
+        });
+        $query->when(request()->has('rank') && request('rank') != null, function ($q)  {
+            $q->orderBy('created_at', request('rank') == 1 ? 'asc' : 'desc');
         });
 
         return $query
