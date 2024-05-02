@@ -45,6 +45,7 @@ class ProductFeatureService
 
     public function addFeature($id,FeatureRequest $request): JsonResponse
     {
+
         DB::beginTransaction();
         try
         {
@@ -172,39 +173,112 @@ class ProductFeatureService
         }
     }
 
-    public function updateFeatures($id,UpdateProductFeaturesRequest $request): JsonResponse
-    {
 
+
+    public function updateFeatures($id, UpdateProductFeaturesRequest $request): JsonResponse
+    {
         DB::beginTransaction();
         try {
-
             $product = $this->productRepository->getById($id);
 
-            foreach ($request->productFeature as $feature) {
-                $this->productFeatureRepository->updateProductFeature($product,$feature);
-                $this->updateProductFeatureDetails($feature);
+            $productFeatureQuantities = $this->productFeatureRepository->productFeaturesWithQuantities($product);
+            $totalQuantityProductFeature = array_product($productFeatureQuantities);
+
+            $productOfQuantities = $this->calculateProductOfQuantities($request->productFeature);
+
+            if ($product->count_orders > 0 && $totalQuantityProductFeature != $productOfQuantities) {
+                return $this->responseFail(Http::FORBIDDEN, __('message.trying_update_feature'));
+            }
+
+            if ($totalQuantityProductFeature != $productOfQuantities) {
+                $this->resetProductFeatures($product);
+                $this->addNewProductFeatures($product, $request->productFeature);
+            } else {
+                $this->updateExistingProductFeatures($product, $request->productFeature);
             }
 
             DB::commit();
-
             return $this->responseSuccess(Http::OK, __('messages.updated successfully'));
-
         } catch (ModelNotFoundException $exception) {
             DB::rollback();
             return $this->responseFail(Http::NOT_FOUND, __('messages.No data found'));
         } catch (\Exception $e) {
             DB::rollback();
-            return $this->responseFail(Http::INTERNAL_SERVER_ERROR,$e->getMessage());
+            return $this->responseFail(Http::INTERNAL_SERVER_ERROR, $e->getMessage());
         }
-
     }
 
+    private function calculateProductOfQuantities($features)
+    {
+        $productOfQuantities = 1;
+        foreach ($features as $feature) {
+            $productOfQuantities *= $feature['quantity'];
+        }
+        return $productOfQuantities;
+    }
+
+    private function resetProductFeatures($product): void
+    {
+        $oldProductFeatures = $this->productFeatureRepository->get('product_id', $product->id);
+        foreach ($oldProductFeatures as $productFeature) {
+            $this->productFeatureRepository->delete($productFeature->id);
+        }
+
+        $oldProductPrices = $this->productFeatureItemRepository->get('product_id', $product->id);
+        foreach ($oldProductPrices as $price) {
+            $this->productFeatureItemRepository->delete($price->id);
+        }
+    }
+
+    private function addNewProductFeatures($product, $features): void
+    {
+        foreach ($features as $feature) {
+            $productFeature = $this->productFeatureRepository->createProductFeature($product, $feature);
+            foreach ($feature['details'] as $detail) {
+                $this->productFeatureDetailRepository->create(['product_feature_id' => $productFeature->id, 'content' => $detail['content']]);
+            }
+        }
+        $this->updatePrices($product);
+        $this->addFeaturesToPrice($product);
+    }
+
+    private function updateExistingProductFeatures($product, $features): void
+    {
+        foreach ($features as $feature) {
+            $this->productFeatureRepository->updateProductFeature($product, $feature);
+            $this->updateProductFeatureDetails($feature);
+        }
+    }
+
+
+
+    protected function updatePrices($product): bool
+    {
+        $productFeatureQuantities = $this->productFeatureRepository->productFeaturesWithQuantities($product);//[2,2,2]
+
+        $totalQuantity = array_product($productFeatureQuantities);//2*2*2
+
+        $productFeatureItems = [];
+        for ($i = 0; $i < $totalQuantity; $i++) {
+            $productFeatureItems[] = [
+                'product_id' => $product->id,
+                'product_price' => 0,
+                'price' => 0,
+                'quantity' => 0
+            ];
+        }
+
+        return $this->productFeatureItemRepository->createMany($productFeatureItems);//create many prices
+    }
 
     protected function updateProductFeatureDetails($featureData): void
     {
         foreach ($featureData['details'] as $detail)
         {
-            $this->productFeatureDetailRepository->update($detail['id'],['content' => $detail['content']]);
+            if($detail['id'] != null){
+                $this->productFeatureDetailRepository->update($detail['id'],['content' => $detail['content']]);
+
+            }
         }
     }
 
@@ -236,7 +310,6 @@ class ProductFeatureService
         } catch (\Exception $e) {
             return $this->responseFail(Http::INTERNAL_SERVER_ERROR,$e->getMessage());
         }
-
 
     }
 

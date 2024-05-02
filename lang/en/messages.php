@@ -176,5 +176,7 @@ return [
 
     'message_check_prices_add' => 'Product features have been added successfully. Please check and adjust the product prices.',
      'message_check_prices_delete' => 'Product feature has been deleted successfully. Please check and adjust the product prices.',
+    'trying_update_feature' => 'You are not allowed to update the feature quantity because the product has existing orders.',
+
 
 ];

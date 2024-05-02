@@ -193,19 +193,17 @@ class ProductService
 
     public function deleteImage($id): JsonResponse
     {
+
         try
         {
             $productImage = $this->productImageRepository->getById($id);
             $product = $this->productRepository->getById($productImage->product_id);
+            $this->deleteImageAndRecord($productImage);
             if($product->images->count() == 1)
             {
-                $this->deleteImageAndRecord($productImage);
                 $this->productImageRepository->create(['image' => 'storage/product/images/product.jpg' , 'product_id' => $product->id]);
-                return $this->responseSuccess(message: __('messages.deleted successfully'));
-            } else {
-                $this->deleteImageAndRecord($productImage);
-                return $this->responseSuccess(message: __('messages.deleted successfully'));
             }
+            return $this->responseSuccess(message: __('messages.deleted successfully'));
         } catch (\Exception $e) {
             return $this->responseFail(message: __('messages.Something went wrong'));
         }
